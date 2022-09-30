@@ -1,0 +1,40 @@
+[Unit]
+Description=Git Repositories Caching Server Daemon
+
+[Service]
+# It is recommended to have a dedicated system user for the service
+User=gitcache
+Group=gitcache
+EnvironmentFile=/opt/gitcache/git-caching-daemon.conf
+ExecStart=/opt/gitcache/git_caching_proxy.py
+StandardInput=socket
+StandardOutput=inherit
+StandardError=journal
+
+# Below are some security hardening directives quickly thrown together from various
+# online sources. They may need adjustments for your particular version of systemd
+# or configuration.
+# For example, on Ubuntu 18.04 LTS, the SystemCallFilter directive does not accept
+# the @system-service group.
+PrivateTmp=yes
+NoNewPrivileges=true
+RestrictNamespaces=yes
+DevicePolicy=closed
+PrivateDevices=yes
+PrivateUsers=yes
+ProtectControlGroups=yes
+ProtectHome=yes
+ProtectKernelModules=yes
+ProtectKernelTunables=yes
+ProtectKernelLogs=yes
+# Adjust ProtectSystem if you require write access to /usr, /etc, or such
+ProtectSystem=full
+ProtectClock=yes
+ProtectProc=invisible
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_NETLINK
+MemoryDenyWriteExecute=yes
+LockPersonality=yes
+CapabilityBoundingSet=
+SystemCallFilter=@system-service @network-io @file-system
